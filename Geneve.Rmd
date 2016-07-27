@@ -1,0 +1,50 @@
+---
+title: "Geneve"
+author: "Kirsten Zimbardi"
+date: "21 July 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# clean workspace
+rm(list=ls())
+
+```
+
+Cash flow estimations  
+```{r}
+
+vn = function(g, r, FCFn)
+{
+  vn = ((1+g)/(r-g)) * FCFn
+  return(vn)
+}
+
+
+vo = function(cf, r, Vn)
+{
+  for(i in 1:(length(cf)-1)) {
+    Vo = cf[i]/(1+r)^i
+  }
+  Vo = Vo + (cf[length(df)] + Vn)/(1+r)^length(cf)
+  return(Vo)
+}
+ 
+
+price.share = function(Vo, debt, n.shares)
+{
+  ps = (Vo - debt)/n.shares
+  return(ps)
+}
+
+Vn = vn(0.04, 0.11, 407)
+Vo = vo(c(352, 385, 407), 0.11, 6000)
+Pshare = price.share(Vo, 1000, 100)
+
+
+
+
+```
+

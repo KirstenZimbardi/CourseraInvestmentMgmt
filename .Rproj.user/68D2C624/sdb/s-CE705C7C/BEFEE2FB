@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Geneve\"\nauthor: \"Kirsten Zimbardi\"\ndate: \"21 July 2016\"\noutput: html_document\n---\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n\n# clean workspace\nrm(list=ls())\n\n```\n\nCash flow estimations  \n```{r}\n\nvn = function(g, r, FCFn)\n{\n  vn = ((1+g)/(r-g)) * FCFn\n  return(vn)\n}\n\n\nvo = function(cf, r, Vn)\n{\n  for(i in 1:(length(cf)-1)) {\n    Vo = cf[i]/(1+r)^i\n  }\n  Vo = Vo + (cf[length(df)] + Vn)/(1+r)^length(cf)\n  return(Vo)\n}\n \n\nprice.share = function(Vo, debt, n.shares)\n{\n  ps = (Vo - debt)/n.shares\n  return(ps)\n}\n\nVn = vn(0.04, 0.11, 407)\nVo = vo(c(352, 385, 407), 0.11, 6000)\nPshare = price.share(Vo, 1000, 100)\n\n\n\n\n```\n\n",
+    "created" : 1469085549873.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "156773615",
+    "id" : "BEFEE2FB",
+    "lastKnownWriteTime" : 1469577402,
+    "last_content_update" : 1469577402434,
+    "path" : "~/Dropbox/Upskilling/CourseraInvestmentMgmt/Geneve.Rmd",
+    "project_path" : "Geneve.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

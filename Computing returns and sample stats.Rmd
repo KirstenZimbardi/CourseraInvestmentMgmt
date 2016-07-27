@@ -1,0 +1,208 @@
+---
+title: "Computing returns and sample stats"
+author: "Kirsten Zimbardi"
+date: "15 July 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# clean workspace
+rm(list=ls())
+
+# packages
+require(lubridate)
+require(MASS)
+
+# functions
+source("HelperFunctionsPorfolioMgmt.R")
+
+```
+
+load data 
+```{r}
+# multiple files
+#fileNames <- Sys.glob("*.csv")
+#col.names = c("Date", "Amount", "Description", "Balance")
+#data.ls = NULL
+#for (i in 1:length(fileNames)) {
+#  data.ls[[i]] <- read.csv(fileNames[i], header = F, stringsAsFactors = F)
+#  names(data.ls[[i]]) = col.names
+#  data.ls[[i]]$Date = as.POSIXlt(data.ls[[i]]$Date, format = "%d/%m/%Y")
+#}
+
+# single file
+data <- read.csv("Data.csv", header = T, stringsAsFactors = F)
+
+cols.price = c(2,3)
+for (i in cols.price) {
+  names(data)[i] = paste0(names(data)[i], ".Price")
+}
+
+data$Date = as.POSIXlt(data$Date, format = "%d/%m/%Y")
+
+
+```
+
+
+computing returns  
+```{r}
+df = data
+for (j in cols.price) {
+  for (i in 2:nrow(df)) {
+    df[i,(j+2)] = df[i,j]/df[(i-1),j] - 1
+  }
+  names(df)[(j+2)] = gsub(".Price", ".Returns", names(df)[(j)])
+}
+
+data = df
+```
+
+
+computing average returns, variance and covariance  
+```{r}
+df = data
+cols.return = c(4:5)
+
+m = NULL
+v = NULL
+for(j in 1:length(cols.return)) {
+  m[j] = mean(df[,cols.return[j]], na.rm=T)
+  v[j] = var(df[,cols.return[j]], na.rm=T)
+}
+
+cv = cov(df[2:nrow(df),cols.return[1]], df[2:nrow(df), cols.return[2]])
+
+
+df.stats = Stats(df, cols.return)
+df.stats
+
+df$period = as.factor(ifelse(df$Date>"2003-12-31", "2004-2015", "1992-2003"))
+
+stats.spx.index = Stats.grouped(df, 4, 6)
+stats.spx.index *100
+stats.us.index = Stats.grouped(df, 5, 6)
+stats.us.index *100
+
+```
+
+preference metric - sample  
+?calculates preference-equivalent returns  
+```{r}
+
+
+pref.sample.percent(exp.return=2, variability=20, v.type="vol")
+pref.sample.percent(2, 20, v.type="vol")
+
+pref.sample(exp.return=df.stats[1,1], variability=df.stats[1,2], risk.aversion=10, v.type="var")
+pref.sample(exp.return=df.stats[2,1], variability=df.stats[2,2], risk.aversion=10, v.type="var")
+
+```
+
+preference metric - probability  
+```{r}
+E.vec = c(1, 2, 3)/100
+p.vec = c(1, 2, 3)/100
+sum(E.vec * p.vec)
+
+```
+
+expected return - sample  
+```{r}
+#r = c(0.15, 0.13, -0.2, 0.12, 0.02)
+Return = c(15, 13, -20, 12, 2)/100
+
+Er = 1/length(Return) * sum(Return)
+Er
+```
+
+total return  
+```{r}
+
+Price.initial = 1000
+Price.later = 1000
+cap.gain = 0
+dividends = 50
+(Price.initial - Price.later + cap.gain + dividends) / Price.later
+
+```
+
+
+total return with inflation rate  
+```{r}
+Price.initial = 100
+Inflation.initial = 1
+Price.later = 90
+Inflation.later = 1 - (5/100)
+dividends.later = 0
+
+(((Price.later + dividends.later)/Inflation.later) - (Price.initial/Inflation.initial)) / (Price.initial/Inflation.initial)
+```
+
+
+expanding average returns, variance and covariance  
+```{r}
+start = which(df$Date == "1996-01-31")
+a = rep(0,(nrow(df) - start + 1))
+exp.ave = as.data.frame(cbind(a, a))
+exp.var = as.data.frame(cbind(a, a))
+exp.cov = as.data.frame(a)
+for(j in 4:5) { 
+  for(i in start:nrow(df)) {
+    exp.ave[(i-start+1),(j-3)] = mean(df[2:i,j])
+    exp.var[(i-start+1),(j-3)] = var(df[2:i,j])
+  }
+}
+
+# visualising trends over time
+dates = df[50:nrow(df),1]
+equity = df2[,4]
+bonds = df2[,5]
+
+quartz()
+plot(dates, equity, type="n")
+lines(dates, equity, col="red", lwd=2)
+lines(dates, bonds, col="blue", lwd=2)
+
+
+equity = exp.ave[,1]
+bonds = exp.ave[,2]
+
+quartz()
+plot(dates, equity, type="n")
+lines(dates, equity, col="red", lwd=2)
+lines(dates, bonds, col="blue", lwd=2)
+
+
+equity = exp.var[,1]
+bonds = exp.var[,2]*10
+quartz()
+plot(dates, equity, type="n")
+#lines(dates, equity, col="red", lwd=2)
+lines(dates, bonds, col="blue", lwd=2)
+
+plot(dates, bonds)
+
+exp.cov = NULL
+for(i in start:nrow(df)) {
+    exp.cov[(i-start+1)] = cov(df[2:i,4], df[2:i,5])
+}
+
+plot(dates, exp.cov)
+
+  
+```
+
+
+# Week 2  
+## Optimising portfolio construction  
+Maximising Er by altering w  
+```{r}
+# expected return - portfolio
+Er.p = Rrisk.free + t(w)
+
+
+```
+
+

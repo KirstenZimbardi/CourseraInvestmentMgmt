@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "# HelperFunctions for portfolio management\n\nStats <- function(df, cols.return)\n{\n  m = NULL\n  v = NULL\n  for(j in 1:length(cols.return)) {\n    m[j] = mean(df[,cols.return[j]], na.rm=T)\n    v[j] = var(df[,cols.return[j]], na.rm=T)\n  }\n  cv = cov(df[2:nrow(df),cols.return[1]], df[2:nrow(df),cols.return[2]])\n  s = as.data.frame(cbind(m,v,cv))\n  s$cv[1] = NA\n  names(s) = c(\"Return.Average\", \"Variance\", \"Covariance\")\n  row.names(s) = names(df[,cols.return])\n  return(s)\n}\n\nStats.grouped = function(df, dv, iv)\n{\n  means = tapply(df[,dv], df[,iv], mean, na.rm=T)\n  variance = tapply(df[,dv], df[,iv], var, na.rm=T)\n  n = tapply(df[,dv], df[,iv], length)\n  stats = as.data.frame(means)\n  stats = cbind(stats, variance, n)\n  return(stats)\n}\n\npref.sample.percent = function(exp.return, variability, risk.aversion=2, v.type = c(\"var\", \"vol\", \"sd\")) {\n  exp.return = exp.return/100\n  variability = variability/100\n  ifelse(v.type == \"vol\" | v.type == \"sd\", (variance = variability^2), (variance = variability)) \n  print(exp.return - risk.aversion/2 * variance)\n}\n\npref.sample = function(exp.return, variability, risk.aversion=2, v.type = c(\"var\", \"vol\", \"sd\")) {\n  exp.return = exp.return\n  variability = variability\n  ifelse(v.type == \"vol\" | v.type == \"sd\", (variance = variability^2), (variance = variability)) \n  print(exp.return - risk.aversion/2 * variance)\n}\n\n",
+    "created" : 1468820286974.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2158564351",
+    "id" : "797657BA",
+    "lastKnownWriteTime" : 1468820787,
+    "last_content_update" : 1468820787701,
+    "path" : "~/Dropbox/Upskilling/CourseraInvestmentMgmt/HelperFunctionsPortfolioMgmt.R",
+    "project_path" : "HelperFunctionsPortfolioMgmt.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

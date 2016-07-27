@@ -1,0 +1,29 @@
+---
+title: "Personal Portfolio"
+author: "Kirsten Zimbardi"
+date: "23 July 2016"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# clean workspace
+rm(list=ls())
+
+# packages
+require(lubridate)
+require(MASS)
+require(quantmod)
+
+# functions
+source("HelperFunctionsPorfolioMgmt.R")
+
+```
+
+load data 
+```{r}
+
+
+```

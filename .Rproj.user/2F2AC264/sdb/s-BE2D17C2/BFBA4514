@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Personal Portfolio\"\nauthor: \"Kirsten Zimbardi\"\ndate: \"23 July 2016\"\noutput: html_document\n---\n\n\n```{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\n\n# clean workspace\nrm(list=ls())\n\n# packages\nrequire(lubridate)\nrequire(MASS)\nrequire(quantmod)\n\ninstall.packages(\"XML\")\ninstall.packages(\"gdata\")\ninstall.packages(\"pander\")\ninstall.packages(\"shiny\")\ninstall.packages(\"qmao\", repos=\"http://R-Forge.R-project.org\")\nrequire(qmao)\nrequire(FinancialInstrument)\n\n#install.packages(\"IBrokers\")\n#require(IBrokers)\n#install.packages(\"twsInstrument\", repos=\"http://R-Forge.R-project.org\") #website throw 404 error\n\n# functions\nsource(\"HelperFunctionsPorfolioMgmt.R\")\n\n```\n\nload data \n```{r}\ngetSymbols(\"GOOG\",src=\"yahoo\") # from yahoo finance \n\ncurrency(c(\"USD\", \"EUR\", \"AUD\")) # define some currencies\nstock(c(\"SPY\", \"LQD\", \"IBM\", \"GS\"), currency=\"USD\")\nexchange_rate(\"USDAUD\")\nls_stocks()\nls_instruments()\n\ngetInstrument(\"IBM\")\nupdate_instruments.yahoo(ls_stocks())\nupdate_instruments.TTR(ls_stocks()) # doesn't update ETFs\nupdate_instruments.masterDATA(ls_stocks()) # only updates ETFs\ngetInstrument(\"SPY\")\n\n## Compare instruments with all.equal.instrument method\nall.equal(getInstrument(\"USD\"), getInstrument(\"USD\"))\nall.equal(getInstrument(\"USD\"), getInstrument(\"EUR\"))\nall.equal(getInstrument(\"SPY\"), getInstrument(\"LQD\"))\n\n## Search for the tickers of instruments that contain words\nfind.instrument(\"computer\") #IBM\nfind.instrument(\"bond\")  #LQD\n\n\n```\n",
+    "created" : 1469247749497.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1962572492",
+    "id" : "BFBA4514",
+    "lastKnownWriteTime" : 1469247783,
+    "last_content_update" : 1469252849536,
+    "path" : "~/Dropbox/Upskilling/CourseraInvestmentMgmt/Personal Portfolio.Rmd",
+    "project_path" : "Personal Portfolio.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
